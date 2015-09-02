@@ -1,17 +1,17 @@
 open Elf.SectionHeader
-open E2j_Json
+open B2J_Json
 
 let section_header2json sh =
   `O [
-    "sh_type" , to_float sh.sh_type;
-    "sh_flags", to_float sh.sh_flags;
-    "sh_addr", to_float sh.sh_addr;
-    "sh_offset", to_float sh.sh_offset;
-    "sh_size", to_float sh.sh_size;
-    "sh_link", to_float sh.sh_link;
-    "sh_info", to_float sh.sh_info;
-    "sh_addralign", to_float sh.sh_addralign;
-    "sh_entsize", to_float sh.sh_entsize;
+    "sh_type" , to_hex sh.sh_type;
+    "sh_flags", to_hex sh.sh_flags;
+    "sh_addr", to_hex sh.sh_addr;
+    "sh_offset", to_hex sh.sh_offset;
+    "sh_size", to_hex sh.sh_size;
+    "sh_link", to_hex sh.sh_link;
+    "sh_info", to_hex sh.sh_info;
+    "sh_addralign", to_hex sh.sh_addralign;
+    "sh_entsize", to_hex sh.sh_entsize;
     "name", `String sh.name;
     "type", `String (shtype_to_string sh.sh_type);
   ]

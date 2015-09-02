@@ -1,0 +1,13 @@
+# OASIS_START
+# DO NOT EDIT (digest: d2f4d3db6aae3ce07046cef7d4f6f900)
+version = "1.0.0"
+description =
+"Converts an ELF, mach-o, or PE binary to a JSON representation"
+requires = "jsonm rdr"
+archive(byte) = "json.cma"
+archive(byte, plugin) = "json.cma"
+archive(native) = "json.cmxa"
+archive(native, plugin) = "json.cmxs"
+exists_if = "json.cma"
+# OASIS_STOP
+

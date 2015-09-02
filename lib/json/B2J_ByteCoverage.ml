@@ -1,5 +1,5 @@
 open ByteCoverage
-open E2j_Json
+open B2J_Json
 
 let data2json (data:data) =
   `O [

@@ -1,9 +1,16 @@
 PKG jsonm
+PKG base64
 PKG rdr
 PKG rdr.elf
-PKG base64
+PKG rdr.mach
 
 S src
 S lib
+S lib/mach
+S lib/elf
+S lib/json
 B _build/src
 B _build/lib
+B _build/lib/mach
+B _build/lib/elf
+B _build/lib/json

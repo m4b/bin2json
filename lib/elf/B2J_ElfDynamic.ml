@@ -1,11 +1,11 @@
 open Elf.Dynamic
-open E2j_ElfSymbolTable
-open E2j_Json
+open B2J_ElfSymbolTable
+open B2J_Json
 
 let dyn2json dyn = 
   `O [
-    "d_tag" , (to_float @@ from_tag dyn.d_tag);
-    "d_un", (to_float dyn.d_un);
+    "d_tag" , (to_hex @@ from_tag dyn.d_tag);
+    "d_un", (to_hex dyn.d_un);
     "name", `String (tag_to_string dyn.d_tag);
   ]
 

@@ -1,16 +1,16 @@
 open Elf.ProgramHeader
-open E2j_Json
+open B2J_Json
 
 let program_header2json ph =
   `O [
-    "p_type" , to_float ph.p_type;
-    "p_flags", to_float ph.p_flags;
-    "p_offset", to_float ph.p_offset;
-    "p_vaddr", to_float ph.p_vaddr;
-    "p_paddr", to_float ph.p_paddr;
-    "p_filesz", to_float ph.p_filesz;
-    "p_memsz", to_float ph.p_memsz;
-    "p_align", to_float ph.p_align;
+    "p_type" , to_hex ph.p_type;
+    "p_flags", to_hex ph.p_flags;
+    "p_offset", to_hex ph.p_offset;
+    "p_vaddr", to_hex ph.p_vaddr;
+    "p_paddr", to_hex ph.p_paddr;
+    "p_filesz", to_hex ph.p_filesz;
+    "p_memsz", to_hex ph.p_memsz;
+    "p_align", to_hex ph.p_align;
     "type", `String (ptype_to_string ph.p_type);
     "flags", `String (flags_to_string ph.p_flags);
   ]

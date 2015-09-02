@@ -1,0 +1,10 @@
+# OASIS_START
+# DO NOT EDIT (digest: 99e9d83201879199b3980a031e3b27cd)
+B2J_Elf
+B2J_ElfHeader
+B2J_ElfProgramHeader
+B2J_ElfSectionHeader
+B2J_ElfSymbolTable
+B2J_ElfDynamic
+B2J_ElfReloc
+# OASIS_STOP

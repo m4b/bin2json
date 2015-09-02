@@ -1,13 +1,13 @@
 open Elf.Reloc
-open E2j_Json
+open B2J_Json
 
 let rela2json rela = 
   `O [
-    "r_offset" , to_float rela.r_offset;
-    "r_info" , to_float rela.r_info;
-    "r_addend" , to_float rela.r_addend;
-    "index", to_float rela.symindex;
-    "type", to_float rela.symtype;
+    "r_offset" , to_hex rela.r_offset;
+    "r_info" , to_hex rela.r_info;
+    "r_addend" , to_hex rela.r_addend;
+    "index", to_hex rela.symindex;
+    "type", to_hex rela.symtype;
   ]
 
 let to_json relocs = 

@@ -1,8 +1,8 @@
 exception Escape of ((int * int) * (int * int)) * Jsonm.error
 
-type json = 
+type t = 
   [ `Null | `Bool of bool | `Float of float| `String of string
-  | `A of json list | `O of (string * json) list ]
+  | `A of t list | `O of (string * t) list ]
 
 let to_hex i = 
   let hex = Printf.sprintf "0x%x" i in
@@ -12,16 +12,15 @@ let to_number i = `Float (float_of_int i)
 
 let to_byte_array l = `A (List.map to_number l)
 
+let add_key key value o :t =
+  match o with
+  | `O os ->
+    `O ((key,value)::os)
+  | _ ->
+    invalid_arg "Cannot add key to non Object"
+
 (* from JS Number.MAX_SAFE_INTEGER *)
 let kMAX_SAFE_INTEGER = 9007199254740991
-
-(* TODO: decide what to do *)
-let to_float (i:int):json =  to_hex i   (* 
-  if (i > kMAX_SAFE_INTEGER) then
-    `String (string_of_int i)
-  else
-    `Float (float_of_int i)
- *)
 
 let print ~minify json =
   let enc e l = ignore (Jsonm.encode e (`Lexeme l)) in

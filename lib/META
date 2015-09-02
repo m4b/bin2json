@@ -1,12 +1,13 @@
 # OASIS_START
-# DO NOT EDIT (digest: 5783b88574d6d8cf18f1020869d79454)
+# DO NOT EDIT (digest: db33af9a8c5efd0d1958c31426d01438)
 version = "1.0.0"
-description = "Converts an ELF binary to a JSON representation"
-requires = "jsonm rdr rdr.elf"
-archive(byte) = "e2jlib.cma"
-archive(byte, plugin) = "e2jlib.cma"
-archive(native) = "e2jlib.cmxa"
-archive(native, plugin) = "e2jlib.cmxs"
-exists_if = "e2jlib.cma"
+description =
+"Converts an ELF, mach-o, or PE binary to a JSON representation"
+requires = "json mach2json elf2json base64 rdr rdr.elf rdr.mach"
+archive(byte) = "b2jlib.cma"
+archive(byte, plugin) = "b2jlib.cma"
+archive(native) = "b2jlib.cmxa"
+archive(native, plugin) = "b2jlib.cmxs"
+exists_if = "b2jlib.cma"
 # OASIS_STOP
 
