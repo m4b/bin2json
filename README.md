@@ -22,7 +22,7 @@ It's future time.
 
 This is not on `opam` yet.  Uses `rdr` features which are in master, but not in opam.
 
-So, if you want to runt his program right now, you need to do a little work.
+So, if you want to run his program right now, you need to do a little work.
 
 First you need to uninstall the opam version of `rdr` and then do:
 
