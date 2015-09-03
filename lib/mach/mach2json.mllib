@@ -1,4 +1,9 @@
 # OASIS_START
-# DO NOT EDIT (digest: 026257f8c0046044ec82f1e1b46f826e)
+# DO NOT EDIT (digest: ae17a099b1a9380db667a006a4db465d)
 B2J_MachHeader
+B2J_MachLoadCommand
+B2J_MachLoadCommandTypes
+B2J_MachExport
+B2J_MachImport
+B2J_MachSymbolTable
 # OASIS_STOP

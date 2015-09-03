@@ -33,6 +33,7 @@ Library mach2json
   Modules:
     B2J_MachHeader,
     B2J_MachLoadCommand,
+    B2J_MachLoadCommandTypes,
     B2J_MachExport,
     B2J_MachImport,
     B2J_MachSymbolTable
