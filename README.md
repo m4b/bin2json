@@ -1,25 +1,41 @@
-# elf2json
+# bin2json
 
-Converts an ELF binary to a JSON representation, because it's 2015 and everything should be converted to JSON, and why not?
+Listen:
 
-**New Features**
+It's 2015, and basically everything needs to be in JSON.
 
-* `elf2json -o symbolTable` : selectively print keys from the JSON representation
-* `symbolTable` and `dynamicSymbols` are now sorted by address.
-* `slideSectors` key added, which is an object with `begin`, `end`, and `slide` fields which give values to subtract from the VM address of a symbol, to give its binary on-disk offset location (if it has one).
+So I'm porting [elf2json](http://github.com/m4b/elf2json) to support:
+
+* ELF
+* Mach-o
+* PE
+
+i.e., the holy trinity.
+
+PE is currently unimplemented; mach-o is almost implemented, and ELF is more or less implemented.
+
+Give me a about 2 weeks and I'll have PE implemented in [`rdr`](http://github.com/m4b/rdr) and then in this project.
+
+It's future time.
 
 # Install
 
-Easy:
+This is not on `opam` yet.  Uses `rdr` features which are in master, but not in opam.
+
+So, if you want to run his program right now, you need to do a little work.
+
+First you need to uninstall the opam version of `rdr` and then do:
 
 ```bash
-opam install elf2json
+git clone http://github.com/m4b/rdr && cd rdr && make && sudo make install
 ```
 
-Build and Install:
+I.e., get and install the git, bleeding edge master version.
+
+Then, you can use this project:
 
 ```bash
-make && make install
+cd </path/to/bin2json/>; make && make install
 ```
 
 or:
@@ -28,28 +44,45 @@ or:
 ocaml setup.ml -configure && ocaml setup.ml -build && sudo ocaml setup.ml -install
 ```
 
+To run my paltry and crappy `bash` test do:
+
+```bash
+./configure --enable-tests && make test
+```
+
 # Usage
+
+**NOTE**: the json api/output will be versioned via semantic versioning, with the `version` tag present on the full JSON object.  When I officially release it, it will have version v1.0.0.  Until then, it is experimental and prone to API breakage; sorry about that, just trying to get it right.  After that, you can check the version, and expect behavior according to [semver](http://semver.org/).
+
+Have fun!
 
 Most basic:
 
-`elf2json <path/to/binary>`
+`bin2json <path/to/binary>`
 
 Minified:
 
-`elf2json -m <binary>`
+`bin2json -m <binary>`
 
 With base64 encoded binary:
 
-`elf2json -b <binary>`
+`bin2json -b <binary>`
 
 With byte-coverage analysis:
 
-`elf2json -c <binary>`
+`bin2json -c <binary>`
+
+Selectively _only_ print a specific key:
+
+`bin2json -o symbolTable` : only prints the `symbolTable` key's value
+
+If you try to print coverage selectively, you need to also pass the `-c` option (similarly _mutatis mutandi_ the other command line arguments).
 
 # Example
 
 ```json
 {
+  "version": "v1.0.0",
   "header": {
     "value": {
       "e_ident": {
@@ -74,7 +107,6 @@ With byte-coverage analysis:
       "e_shentsize": "0x40",
       "e_shnum": "0x1e",
       "e_shstrndx": "0x1b",
-      "machine": "X86_64",
       "type": "EXEC"
     },
     "meta": {
@@ -816,18 +848,6 @@ With byte-coverage analysis:
   "symbolTable": {
     "value": [
       {
-        "st_name": "0x23a",
-        "st_info": "0x12",
-        "st_other": "0x0",
-        "st_shndx": "0xb",
-        "st_value": "0x4003c0",
-        "st_size": "0x0",
-        "name": "_init",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "FUNC"
-      },
-      {
         "st_name": "0x220",
         "st_info": "0x20",
         "st_other": "0x0",
@@ -838,18 +858,6 @@ With byte-coverage analysis:
         "visibility": "DEFAULT",
         "bind": "WEAK",
         "type": "NOTYPE"
-      },
-      {
-        "st_name": "0x214",
-        "st_info": "0x11",
-        "st_other": "0x2",
-        "st_shndx": "0x18",
-        "st_value": "0x600958",
-        "st_size": "0x0",
-        "name": "__TMC_END__",
-        "visibility": "HIDDEN",
-        "bind": "GLOBAL",
-        "type": "OBJECT"
       },
       {
         "st_name": "0x200",
@@ -864,90 +872,6 @@ With byte-coverage analysis:
         "type": "NOTYPE"
       },
       {
-        "st_name": "0x1fb",
-        "st_info": "0x12",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x400516",
-        "st_size": "0x2d",
-        "name": "main",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x1ef",
-        "st_info": "0x10",
-        "st_other": "0x0",
-        "st_shndx": "0x19",
-        "st_value": "0x600958",
-        "st_size": "0x0",
-        "name": "__bss_start",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "NOTYPE"
-      },
-      {
-        "st_name": "0x1e8",
-        "st_info": "0x12",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x400420",
-        "st_size": "0x2a",
-        "name": "_start",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x1e3",
-        "st_info": "0x10",
-        "st_other": "0x0",
-        "st_shndx": "0x19",
-        "st_value": "0x600960",
-        "st_size": "0x0",
-        "name": "_end",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "NOTYPE"
-      },
-      {
-        "st_name": "0x1d3",
-        "st_info": "0x12",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x400550",
-        "st_size": "0x65",
-        "name": "__libc_csu_init",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x1c4",
-        "st_info": "0x11",
-        "st_other": "0x0",
-        "st_shndx": "0xf",
-        "st_value": "0x4005d0",
-        "st_size": "0x4",
-        "name": "_IO_stdin_used",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0x1b7",
-        "st_info": "0x11",
-        "st_other": "0x2",
-        "st_shndx": "0x18",
-        "st_value": "0x600950",
-        "st_size": "0x0",
-        "name": "__dso_handle",
-        "visibility": "HIDDEN",
-        "bind": "GLOBAL",
-        "type": "OBJECT"
-      },
-      {
         "st_name": "0x1a8",
         "st_info": "0x20",
         "st_other": "0x0",
@@ -957,18 +881,6 @@ With byte-coverage analysis:
         "name": "__gmon_start__",
         "visibility": "DEFAULT",
         "bind": "WEAK",
-        "type": "NOTYPE"
-      },
-      {
-        "st_name": "0x19b",
-        "st_info": "0x10",
-        "st_other": "0x0",
-        "st_shndx": "0x18",
-        "st_value": "0x600948",
-        "st_size": "0x0",
-        "name": "__data_start",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
         "type": "NOTYPE"
       },
       {
@@ -996,42 +908,6 @@ With byte-coverage analysis:
         "type": "FUNC"
       },
       {
-        "st_name": "0x162",
-        "st_info": "0x12",
-        "st_other": "0x0",
-        "st_shndx": "0xe",
-        "st_value": "0x4005c4",
-        "st_size": "0x0",
-        "name": "_fini",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x15b",
-        "st_info": "0x10",
-        "st_other": "0x0",
-        "st_shndx": "0x18",
-        "st_value": "0x600958",
-        "st_size": "0x0",
-        "name": "_edata",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "NOTYPE"
-      },
-      {
-        "st_name": "0x150",
-        "st_info": "0x20",
-        "st_other": "0x0",
-        "st_shndx": "0x18",
-        "st_value": "0x600948",
-        "st_size": "0x0",
-        "name": "data_start",
-        "visibility": "DEFAULT",
-        "bind": "WEAK",
-        "type": "NOTYPE"
-      },
-      {
         "st_name": "0x134",
         "st_info": "0x20",
         "st_other": "0x0",
@@ -1041,66 +917,6 @@ With byte-coverage analysis:
         "name": "_ITM_deregisterTMCloneTable",
         "visibility": "DEFAULT",
         "bind": "WEAK",
-        "type": "NOTYPE"
-      },
-      {
-        "st_name": "0x124",
-        "st_info": "0x12",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x4005c0",
-        "st_size": "0x2",
-        "name": "__libc_csu_fini",
-        "visibility": "DEFAULT",
-        "bind": "GLOBAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x10e",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x17",
-        "st_value": "0x600918",
-        "st_size": "0x0",
-        "name": "_GLOBAL_OFFSET_TABLE_",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0xfb",
-        "st_info": "0x0",
-        "st_other": "0x0",
-        "st_shndx": "0x12",
-        "st_value": "0x600718",
-        "st_size": "0x0",
-        "name": "__init_array_start",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "NOTYPE"
-      },
-      {
-        "st_name": "0xf2",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x15",
-        "st_value": "0x600730",
-        "st_size": "0x0",
-        "name": "_DYNAMIC",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0xe1",
-        "st_info": "0x0",
-        "st_other": "0x0",
-        "st_shndx": "0x12",
-        "st_value": "0x600720",
-        "st_size": "0x0",
-        "name": "__init_array_end",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
         "type": "NOTYPE"
       },
       {
@@ -1114,30 +930,6 @@ With byte-coverage analysis:
         "visibility": "DEFAULT",
         "bind": "LOCAL",
         "type": "FILE"
-      },
-      {
-        "st_name": "0xd5",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x14",
-        "st_value": "0x600728",
-        "st_size": "0x0",
-        "name": "__JCR_END__",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0xc7",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x11",
-        "st_value": "0x400710",
-        "st_size": "0x0",
-        "name": "__FRAME_END__",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
       },
       {
         "st_name": "0x8",
@@ -1162,102 +954,6 @@ With byte-coverage analysis:
         "visibility": "DEFAULT",
         "bind": "LOCAL",
         "type": "FILE"
-      },
-      {
-        "st_name": "0xa0",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x12",
-        "st_value": "0x600718",
-        "st_size": "0x0",
-        "name": "__frame_dummy_init_array_entry",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0x94",
-        "st_info": "0x2",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x4004f0",
-        "st_size": "0x0",
-        "name": "frame_dummy",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x6d",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x13",
-        "st_value": "0x600720",
-        "st_size": "0x0",
-        "name": "__do_global_dtors_aux_fini_array_entry",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0x5e",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x19",
-        "st_value": "0x600958",
-        "st_size": "0x1",
-        "name": "completed.6650",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
-      },
-      {
-        "st_name": "0x48",
-        "st_info": "0x2",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x4004d0",
-        "st_size": "0x0",
-        "name": "__do_global_dtors_aux",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x35",
-        "st_info": "0x2",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x400490",
-        "st_size": "0x0",
-        "name": "register_tm_clones",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x20",
-        "st_info": "0x2",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x400450",
-        "st_size": "0x0",
-        "name": "deregister_tm_clones",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "FUNC"
-      },
-      {
-        "st_name": "0x13",
-        "st_info": "0x1",
-        "st_other": "0x0",
-        "st_shndx": "0x14",
-        "st_value": "0x600728",
-        "st_size": "0x0",
-        "name": "__JCR_LIST__",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "OBJECT"
       },
       {
         "st_name": "0x8",
@@ -1297,274 +993,22 @@ With byte-coverage analysis:
       },
       {
         "st_name": "0x0",
-        "st_info": "0x3",
+        "st_info": "0x0",
         "st_other": "0x0",
-        "st_shndx": "0x19",
-        "st_value": "0x600958",
+        "st_shndx": "0x0",
+        "st_value": "0x0",
         "st_size": "0x0",
         "name": "",
         "visibility": "DEFAULT",
         "bind": "LOCAL",
-        "type": "SECTION"
+        "type": "NOTYPE"
       },
       {
         "st_name": "0x0",
         "st_info": "0x3",
         "st_other": "0x0",
-        "st_shndx": "0x18",
-        "st_value": "0x600948",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x17",
-        "st_value": "0x600918",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x16",
-        "st_value": "0x600910",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x15",
-        "st_value": "0x600730",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x14",
-        "st_value": "0x600728",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x13",
-        "st_value": "0x600720",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x12",
-        "st_value": "0x600718",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x11",
-        "st_value": "0x400620",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x10",
-        "st_value": "0x4005e8",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0xf",
-        "st_value": "0x4005d0",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0xe",
-        "st_value": "0x4005c4",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0xd",
-        "st_value": "0x400420",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0xc",
-        "st_value": "0x4003e0",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0xb",
-        "st_value": "0x4003c0",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0xa",
-        "st_value": "0x400378",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x9",
-        "st_value": "0x400360",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x8",
-        "st_value": "0x400340",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x7",
-        "st_value": "0x400334",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x6",
-        "st_value": "0x4002e0",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x5",
-        "st_value": "0x400280",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x4",
-        "st_value": "0x400260",
-        "st_size": "0x0",
-        "name": "",
-        "visibility": "DEFAULT",
-        "bind": "LOCAL",
-        "type": "SECTION"
-      },
-      {
-        "st_name": "0x0",
-        "st_info": "0x3",
-        "st_other": "0x0",
-        "st_shndx": "0x3",
-        "st_value": "0x40023c",
+        "st_shndx": "0x1",
+        "st_value": "0x400200",
         "st_size": "0x0",
         "name": "",
         "visibility": "DEFAULT",
@@ -1587,8 +1031,8 @@ With byte-coverage analysis:
         "st_name": "0x0",
         "st_info": "0x3",
         "st_other": "0x0",
-        "st_shndx": "0x1",
-        "st_value": "0x400200",
+        "st_shndx": "0x3",
+        "st_value": "0x40023c",
         "st_size": "0x0",
         "name": "",
         "visibility": "DEFAULT",
@@ -1597,14 +1041,602 @@ With byte-coverage analysis:
       },
       {
         "st_name": "0x0",
-        "st_info": "0x0",
+        "st_info": "0x3",
         "st_other": "0x0",
-        "st_shndx": "0x0",
-        "st_value": "0x0",
+        "st_shndx": "0x4",
+        "st_value": "0x400260",
         "st_size": "0x0",
         "name": "",
         "visibility": "DEFAULT",
         "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x5",
+        "st_value": "0x400280",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x6",
+        "st_value": "0x4002e0",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x7",
+        "st_value": "0x400334",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x8",
+        "st_value": "0x400340",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x9",
+        "st_value": "0x400360",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0xa",
+        "st_value": "0x400378",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x23a",
+        "st_info": "0x12",
+        "st_other": "0x0",
+        "st_shndx": "0xb",
+        "st_value": "0x4003c0",
+        "st_size": "0x0",
+        "name": "_init",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0xb",
+        "st_value": "0x4003c0",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0xc",
+        "st_value": "0x4003e0",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x1e8",
+        "st_info": "0x12",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x400420",
+        "st_size": "0x2a",
+        "name": "_start",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x400420",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x20",
+        "st_info": "0x2",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x400450",
+        "st_size": "0x0",
+        "name": "deregister_tm_clones",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x35",
+        "st_info": "0x2",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x400490",
+        "st_size": "0x0",
+        "name": "register_tm_clones",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x48",
+        "st_info": "0x2",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x4004d0",
+        "st_size": "0x0",
+        "name": "__do_global_dtors_aux",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x94",
+        "st_info": "0x2",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x4004f0",
+        "st_size": "0x0",
+        "name": "frame_dummy",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x1fb",
+        "st_info": "0x12",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x400516",
+        "st_size": "0x2d",
+        "name": "main",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x1d3",
+        "st_info": "0x12",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x400550",
+        "st_size": "0x65",
+        "name": "__libc_csu_init",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x124",
+        "st_info": "0x12",
+        "st_other": "0x0",
+        "st_shndx": "0xd",
+        "st_value": "0x4005c0",
+        "st_size": "0x2",
+        "name": "__libc_csu_fini",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x162",
+        "st_info": "0x12",
+        "st_other": "0x0",
+        "st_shndx": "0xe",
+        "st_value": "0x4005c4",
+        "st_size": "0x0",
+        "name": "_fini",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "FUNC"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0xe",
+        "st_value": "0x4005c4",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x1c4",
+        "st_info": "0x11",
+        "st_other": "0x0",
+        "st_shndx": "0xf",
+        "st_value": "0x4005d0",
+        "st_size": "0x4",
+        "name": "_IO_stdin_used",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0xf",
+        "st_value": "0x4005d0",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x10",
+        "st_value": "0x4005e8",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x11",
+        "st_value": "0x400620",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0xc7",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x11",
+        "st_value": "0x400710",
+        "st_size": "0x0",
+        "name": "__FRAME_END__",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0xfb",
+        "st_info": "0x0",
+        "st_other": "0x0",
+        "st_shndx": "0x12",
+        "st_value": "0x600718",
+        "st_size": "0x0",
+        "name": "__init_array_start",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "NOTYPE"
+      },
+      {
+        "st_name": "0xa0",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x12",
+        "st_value": "0x600718",
+        "st_size": "0x0",
+        "name": "__frame_dummy_init_array_entry",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x12",
+        "st_value": "0x600718",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0xe1",
+        "st_info": "0x0",
+        "st_other": "0x0",
+        "st_shndx": "0x12",
+        "st_value": "0x600720",
+        "st_size": "0x0",
+        "name": "__init_array_end",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "NOTYPE"
+      },
+      {
+        "st_name": "0x6d",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x13",
+        "st_value": "0x600720",
+        "st_size": "0x0",
+        "name": "__do_global_dtors_aux_fini_array_entry",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x13",
+        "st_value": "0x600720",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0xd5",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x14",
+        "st_value": "0x600728",
+        "st_size": "0x0",
+        "name": "__JCR_END__",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x13",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x14",
+        "st_value": "0x600728",
+        "st_size": "0x0",
+        "name": "__JCR_LIST__",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x14",
+        "st_value": "0x600728",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0xf2",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x15",
+        "st_value": "0x600730",
+        "st_size": "0x0",
+        "name": "_DYNAMIC",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x15",
+        "st_value": "0x600730",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x16",
+        "st_value": "0x600910",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x10e",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x17",
+        "st_value": "0x600918",
+        "st_size": "0x0",
+        "name": "_GLOBAL_OFFSET_TABLE_",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x17",
+        "st_value": "0x600918",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x19b",
+        "st_info": "0x10",
+        "st_other": "0x0",
+        "st_shndx": "0x18",
+        "st_value": "0x600948",
+        "st_size": "0x0",
+        "name": "__data_start",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "NOTYPE"
+      },
+      {
+        "st_name": "0x150",
+        "st_info": "0x20",
+        "st_other": "0x0",
+        "st_shndx": "0x18",
+        "st_value": "0x600948",
+        "st_size": "0x0",
+        "name": "data_start",
+        "visibility": "DEFAULT",
+        "bind": "WEAK",
+        "type": "NOTYPE"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x18",
+        "st_value": "0x600948",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x1b7",
+        "st_info": "0x11",
+        "st_other": "0x2",
+        "st_shndx": "0x18",
+        "st_value": "0x600950",
+        "st_size": "0x0",
+        "name": "__dso_handle",
+        "visibility": "HIDDEN",
+        "bind": "GLOBAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x214",
+        "st_info": "0x11",
+        "st_other": "0x2",
+        "st_shndx": "0x18",
+        "st_value": "0x600958",
+        "st_size": "0x0",
+        "name": "__TMC_END__",
+        "visibility": "HIDDEN",
+        "bind": "GLOBAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x1ef",
+        "st_info": "0x10",
+        "st_other": "0x0",
+        "st_shndx": "0x19",
+        "st_value": "0x600958",
+        "st_size": "0x0",
+        "name": "__bss_start",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "NOTYPE"
+      },
+      {
+        "st_name": "0x15b",
+        "st_info": "0x10",
+        "st_other": "0x0",
+        "st_shndx": "0x18",
+        "st_value": "0x600958",
+        "st_size": "0x0",
+        "name": "_edata",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
+        "type": "NOTYPE"
+      },
+      {
+        "st_name": "0x5e",
+        "st_info": "0x1",
+        "st_other": "0x0",
+        "st_shndx": "0x19",
+        "st_value": "0x600958",
+        "st_size": "0x1",
+        "name": "completed.6650",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "OBJECT"
+      },
+      {
+        "st_name": "0x0",
+        "st_info": "0x3",
+        "st_other": "0x0",
+        "st_shndx": "0x19",
+        "st_value": "0x600958",
+        "st_size": "0x0",
+        "name": "",
+        "visibility": "DEFAULT",
+        "bind": "LOCAL",
+        "type": "SECTION"
+      },
+      {
+        "st_name": "0x1e3",
+        "st_info": "0x10",
+        "st_other": "0x0",
+        "st_shndx": "0x19",
+        "st_value": "0x600960",
+        "st_size": "0x0",
+        "name": "_end",
+        "visibility": "DEFAULT",
+        "bind": "GLOBAL",
         "type": "NOTYPE"
       }
     ],
@@ -1660,10 +1692,24 @@ With byte-coverage analysis:
       "prefix": "r_"
     }
   },
+  "slideSectors": [
+    {
+      "begin": "0x600718",
+      "end": "0x600958",
+      "slide": "0x600000"
+    },
+    {
+      "begin": "0x400000",
+      "end": "0x400714",
+      "slide": "0x400000"
+    }
+  ],
   "libraries": [
     "libc.so.6",
     "lib/libc.so.6.sstrip"
   ],
+  "container": "ELF",
+  "arch": "X86_64",
   "soname": "",
   "interpreter": "/lib64/ld-linux-x86-64.so.2",
   "isLib": false,
