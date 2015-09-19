@@ -3,6 +3,7 @@ module Config = B2J_Config
 module Coverage = B2J_ByteCoverage
 module Elf = B2J_Elf
 module Mach = B2J_Mach
+module PE = B2J_PE
 
 let commonKeys = [
   "header";
@@ -16,4 +17,4 @@ let commonKeys = [
   "coverage";
   "base64"]
 
-let keys = commonKeys @ Elf.keys @ Mach.keys
+let keys = commonKeys @ Elf.keys @ Mach.keys @ PE.keys

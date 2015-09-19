@@ -15,7 +15,7 @@ let sort symbols =
  *)
 
 let keys = [
-  (* elf keys *)
+  (* mach keys *)
   "loadCommands";
   "exports";
   "imports";

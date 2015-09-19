@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: bf7beda604aaf2b430e969961a570513)
+# DO NOT EDIT (digest: e88042256ca98b58e92139ce8b73d240)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -32,6 +32,13 @@ true: annot, bin_annot
 <lib/elf/*.ml{,i,y}>: pkg_rdr
 <lib/elf/*.ml{,i,y}>: pkg_rdr.elf
 <lib/elf/*.ml{,i,y}>: use_json
+# Library pe2json
+"lib/pe/pe2json.cmxs": use_pe2json
+<lib/pe/*.ml{,i,y}>: pkg_base64
+<lib/pe/*.ml{,i,y}>: pkg_jsonm
+<lib/pe/*.ml{,i,y}>: pkg_rdr
+<lib/pe/*.ml{,i,y}>: pkg_rdr.pe
+<lib/pe/*.ml{,i,y}>: use_json
 # Library b2jlib
 "lib/b2jlib.cmxs": use_b2jlib
 <lib/*.ml{,i,y}>: pkg_base64
@@ -39,28 +46,34 @@ true: annot, bin_annot
 <lib/*.ml{,i,y}>: pkg_rdr
 <lib/*.ml{,i,y}>: pkg_rdr.elf
 <lib/*.ml{,i,y}>: pkg_rdr.mach
+<lib/*.ml{,i,y}>: pkg_rdr.pe
 <lib/*.ml{,i,y}>: use_elf2json
 <lib/*.ml{,i,y}>: use_json
 <lib/*.ml{,i,y}>: use_mach2json
+<lib/*.ml{,i,y}>: use_pe2json
 # Executable bin2json
 <src/bin2json.{native,byte}>: pkg_base64
 <src/bin2json.{native,byte}>: pkg_jsonm
 <src/bin2json.{native,byte}>: pkg_rdr
 <src/bin2json.{native,byte}>: pkg_rdr.elf
 <src/bin2json.{native,byte}>: pkg_rdr.mach
+<src/bin2json.{native,byte}>: pkg_rdr.pe
 <src/bin2json.{native,byte}>: use_b2jlib
 <src/bin2json.{native,byte}>: use_elf2json
 <src/bin2json.{native,byte}>: use_json
 <src/bin2json.{native,byte}>: use_mach2json
+<src/bin2json.{native,byte}>: use_pe2json
 <src/*.ml{,i,y}>: pkg_base64
 <src/*.ml{,i,y}>: pkg_jsonm
 <src/*.ml{,i,y}>: pkg_rdr
 <src/*.ml{,i,y}>: pkg_rdr.elf
 <src/*.ml{,i,y}>: pkg_rdr.mach
+<src/*.ml{,i,y}>: pkg_rdr.pe
 <src/*.ml{,i,y}>: use_b2jlib
 <src/*.ml{,i,y}>: use_elf2json
 <src/*.ml{,i,y}>: use_json
 <src/*.ml{,i,y}>: use_mach2json
+<src/*.ml{,i,y}>: use_pe2json
 # OASIS_STOP
 <bin> : -traverse
 <cee> : -traverse

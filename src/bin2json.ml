@@ -1,30 +1,25 @@
-open LibRdr.Utils
-open LibRdr.Object
+open Rdr.Utils
+open Rdr.Object
 open B2J.Json
 open B2J.Config
 
 let version = "v1.0.0"
 
 let get_json config :B2J.Json.t =
-  let result = LibRdr.Object.get config.install_name in
+  let result = Rdr.Object.get config.install_name in
   begin
   match result with
   | Elf binary ->
     B2J.Elf.to_json binary config
   | Mach binary ->
     B2J.Mach.to_json binary config
+  | PE32 binary ->
+    B2J.PE.to_json binary config
   | Unknown (filename, error) ->
     begin
       B2J.Json.print ~minify:false
         (`O ["error",
              `String error]);
-      exit 1
-    end
-  | PE binary ->
-    begin
-      B2J.Json.print ~minify:false
-        (`O ["error",
-             `String "Unsupported binary format"]);
       exit 1
     end
   end

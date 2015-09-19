@@ -56,6 +56,22 @@ Library elf2json
     B2J_ElfDynamic,
     B2J_ElfReloc
 
+Library pe2json
+  Path: lib/pe
+  BuildTools: ocamlbuild
+  Install: false
+  BuildDepends:
+    json,
+    base64,
+    rdr,
+    rdr.pe
+  Modules:
+    B2J_PE,
+    B2J_PEHeader,
+    B2J_PESectionTable,
+    B2J_PEExport,
+    B2J_PEImport
+
 Library b2jlib
   Path: lib
   BuildTools: ocamlbuild
@@ -64,10 +80,12 @@ Library b2jlib
     json,
     mach2json,
     elf2json,
+    pe2json,
     base64,
     rdr,
     rdr.elf,
-    rdr.mach
+    rdr.mach,
+    rdr.pe
   Modules:
     B2J
 
@@ -79,7 +97,6 @@ Executable bin2json
   BuildDepends:
     json,
     b2jlib,
-    mach2json,
     rdr,
     rdr.elf
 

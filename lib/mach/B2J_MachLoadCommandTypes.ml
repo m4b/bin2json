@@ -301,7 +301,7 @@ let dylib_module_64_to_json (lc:dylib_module_64) =
 
 let dylib_reference_to_json (lc:dylib_reference) = 
   `O[
-    ("isym", (to_hex lc.isym));
+    ("isym", (`String lc.isym));
     ("flags", (to_hex lc.flags));
     ]
 
@@ -319,7 +319,7 @@ let twolevel_hints_command_to_json (lc:twolevel_hints_command) =
 let twolevel_hint_to_json (lc:twolevel_hint) = 
   `O[
     ("isubImage", (to_hex lc.isub_image));
-    ("itoc", (to_hex lc.itoc));
+    ("itoc", (`String lc.itoc));
     ]
 
 
