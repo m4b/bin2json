@@ -17,6 +17,7 @@ let keys = [
 let to_json binary config =
   let pe = PE.get binary in
   let header = Header.to_json pe.PE.header in
+  let sections = SectionTable.to_json pe.PE.sections in
   let libraries = `A (List.map (fun lib -> `String lib)
                          pe.PE.libraries)
   in
@@ -36,17 +37,19 @@ let to_json binary config =
   let json =
     `O [
       "header", header;
+      "sections", sections;
       "exports", exports;
       "imports", imports;
       (*       "symbols", symbols; *)
       "libraries", libraries;
       "container", `String "PE32";
-      (*       "arch", `String (PECpuTypes.cpu_type_to_string pe.PE.header.PE.Header.cputype); *)
+      "arch", `String (PE.MachineType.show_machine pe.PE.header.PEHeader.coff_header.PEHeader.machine);
       "name", `String pe.PE.name;
       "isLib", `Bool pe.PE.is_lib;
-      "is64", `Bool false;       (* fix this? *)
+      "is64", `Bool false;      (* fix this? *)
       "size", Json.to_number pe.PE.size;
       "coverage", coverage;
       "base64", b64;
+      "entry", Json.i64_to_hex pe.PE.entry
     ]
  in json

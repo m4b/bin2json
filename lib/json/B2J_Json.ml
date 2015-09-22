@@ -8,6 +8,10 @@ let to_hex i =
   let hex = Printf.sprintf "0x%x" i in
   `String hex
 
+let i64_to_hex i = 
+  let hex = Printf.sprintf "0x%Lx" i in
+  `String hex
+
 let to_number i = `Float (float_of_int i)
 
 let to_byte_array l = `A (List.map to_number l)

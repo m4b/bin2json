@@ -75,6 +75,7 @@ let to_json binary config =
       "isLib", `Bool elf.Elf.is_lib;
       "is64", `Bool elf.Elf.is_64;
       "size", Json.to_number elf.Elf.size;
+      "entry", Json.i64_to_hex elf.Elf.entry;
       "coverage", coverage;
       "base64", b64;
     ]

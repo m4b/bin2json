@@ -5,7 +5,7 @@ let hint_name_table_entry_to_json (x:hint_name_table_entry) =
   `O[
     ("hint", (to_hex x.hint));
     ("name", (`String x.name));
-    ]
+  ]
 
 let synthetic_import_lookup_table_entry_to_json x =
   match x with
@@ -22,7 +22,7 @@ let import_lookup_table_entry_to_json (x:import_lookup_table_entry) =
   `O[
     ("bitfield", (to_hex x.bitfield));
     ("_synthetic", (synthetic_import_lookup_table_entry_to_json x._synthetic));
-    ]
+  ]
 
 let import_lookup_table_to_json list = `A (List.map import_lookup_table_entry_to_json list)
 
@@ -33,12 +33,12 @@ let import_directory_entry_to_json (x:import_directory_entry) =
     ("forwarderChain", (to_hex x.forwarder_chain));
     ("nameRva", (to_hex x.name_rva));
     ("importAddressTableRva", (to_hex x.import_address_table_rva));
-    ]
+  ]
 
 let synthetic_import_directory_entry_to_json (x:synthetic_import_directory_entry) = 
   `O[
     ("importDirectoryEntry", (import_directory_entry_to_json x.import_directory_entry));
-    ]
+  ]
 
 let import_directory_table_to_json list = `A (List.map synthetic_import_directory_entry_to_json list)
 
@@ -53,6 +53,6 @@ let synthetic_import_to_json (x:synthetic_import) =
     ("ordinal", (to_hex x.ordinal));
     ("offset", (to_hex x.offset));
     ("size", (to_hex x.size));
-    ]
+  ]
 
 let to_json t = `A (List.map synthetic_import_to_json t)

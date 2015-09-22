@@ -104,6 +104,33 @@ let optional_header_to_json (x:optional_header) =
   ]
 
 let to_json (x:PE.Header.t) =
+  let meta =
+    [
+      "coffHeader", 
+      `O [
+        "size", to_number sizeof_coff_header;
+        "bytes", to_byte_array
+          [4; 2; 2; 4; 4; 4; 2; 2;];
+      ];
+      "standardFields",
+      `O [
+        "size", to_number sizeof_standard_fields;
+        "bytes", to_byte_array
+          [2; 1; 1; 4; 4; 4; 4; 4; 4;];
+      ];
+      "windowsFields",
+      `O [
+        "size", to_number sizeof_windows_fields;
+        "bytes", to_byte_array
+          [4; 4; 4; 2; 2; 2; 2; 2; 2; 4; 4; 
+           4; 4; 2; 2; 4; 4; 4; 4; 4; 4;];
+      ];
+      "dataDirectory", `O [
+        "size", to_number 8;
+        "bytes", to_byte_array [4; 4]
+      ];
+      "computedPrefix", `String "_"
+    ] in
   let optional_header =
     match x.optional_header with
     | Some optional_header ->
@@ -111,8 +138,15 @@ let to_json (x:PE.Header.t) =
     | None ->
       `Null
   in
-  `O[
+  let json = [
     ("dosHeader", (dos_header_to_json x.dos_header));
     ("coffHeader", (coff_header_to_json x.coff_header));
     ("optionalHeader", optional_header);
+    "_type", `String 
+      (PE.Characteristic.show_type x.coff_header.characteristics);
+  ]
+  in
+  `O [
+    "value", `O json;
+    "meta", `O meta;
   ]

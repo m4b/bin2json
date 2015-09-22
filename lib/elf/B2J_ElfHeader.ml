@@ -22,6 +22,7 @@ let to_json header =
         [16; 2; 2; 4; 8; 8;
          8; 4; 2; 2; 2; 2; 2; 2;];
       "prefix", `String "e_";
+      "computedPrefix", `String "_";
     ] in
   let json =
     [
@@ -39,7 +40,7 @@ let to_json header =
       "e_shentsize", to_hex header.e_shentsize;
       "e_shnum", to_hex header.e_shnum;
       "e_shstrndx", to_hex header.e_shstrndx;
-      "type", `String (Elf.Constants.etype_to_string header.e_type);
+      "_type", `String (Elf.Constants.etype_to_string header.e_type);
     ] in
   `O [
     "value", `O json;

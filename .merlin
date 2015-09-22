@@ -3,14 +3,17 @@ PKG base64
 PKG rdr
 PKG rdr.elf
 PKG rdr.mach
+PKG rdr.pe
 
 S src
 S lib
 S lib/mach
 S lib/elf
+S lib/pe
 S lib/json
 B _build/src
 B _build/lib
 B _build/lib/mach
 B _build/lib/elf
+B _build/lib/pe
 B _build/lib/json

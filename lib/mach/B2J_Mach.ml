@@ -50,11 +50,12 @@ let to_json binary config =
       "symbols", symbols;
       "libraries", libraries;
       "container", `String "Mach-o";
-      "arch", `String (MachCpuTypes.cpu_type_to_string mach.Mach.header.Mach.Header.cputype);
+      "arch", `String (Mach.CpuTypes.cpu_type_to_string mach.Mach.header.Mach.Header.cputype);
       "soname", `String mach.Mach.name;
       "isLib", `Bool mach.Mach.is_lib;
       "is64", `Bool true;       (* fix this? *)
       "size", Json.to_number mach.Mach.size;
+      "entry", Json.i64_to_hex mach.Mach.entry;
       "coverage", coverage;
       "base64", b64;
     ]

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-output="$(./bin2json.native -m bin/linux/other)"
+output="$(./bin2json.native -m -b -c bin/other)"
 
-diff="$(diff -q <(echo "$output") "output/other.m.json")"
+diff="$(diff -q <(echo "$output") "output/other.m.b.c.json")"
 
 result=$?
 
