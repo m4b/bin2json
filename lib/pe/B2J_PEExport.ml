@@ -69,4 +69,14 @@ let synthetic_export_to_json (x:synthetic_export) =
     ("reexport", reexport);
     ]
 
-let to_json exports :B2J_Json.t = `A (List.map synthetic_export_to_json exports) 
+let to_json exports :B2J_Json.t =
+  let meta =
+    [
+      ("computedPrefix", `String "")
+    ]
+  in
+  let json = List.map synthetic_export_to_json exports in
+  `O [
+    "meta", `O meta;
+    "value", `A json;
+  ]

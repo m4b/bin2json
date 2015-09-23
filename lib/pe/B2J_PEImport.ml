@@ -55,4 +55,15 @@ let synthetic_import_to_json (x:synthetic_import) =
     ("size", (to_hex x.size));
   ]
 
-let to_json t = `A (List.map synthetic_import_to_json t)
+let to_json t =
+  let meta =
+    [
+      ("computedPrefix", `String "")
+    ]
+  in
+  let json = List.map synthetic_import_to_json t
+  in
+    `O [
+    "meta", `O meta;
+    "value", `A json;
+  ]
