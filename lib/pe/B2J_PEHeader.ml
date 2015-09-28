@@ -85,7 +85,6 @@ let _dd = [
 let data_directories_to_json (x:PE.DataDirectories.t) =
   `O ((List.mapi
          (fun i dd ->
-          Printf.printf "%d\n" i;
           let va,sz = List.nth _dd i in
           [(va, to_hex dd.virtual_address);(sz, to_hex dd.size)])
          x) |> List.flatten)
