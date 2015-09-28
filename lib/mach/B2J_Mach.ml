@@ -41,6 +41,10 @@ let to_json binary config =
     else
       `Null
   in
+  let architecture =
+    Mach.CpuTypes.cpu_type_to_string
+      mach.Mach.header.Mach.Header.cputype
+  in
   let json =
     `O [
       "header", header;
@@ -50,8 +54,10 @@ let to_json binary config =
       "symbols", symbols;
       "libraries", libraries;
       "container", `String "Mach-o";
-      "arch", `String (Mach.CpuTypes.cpu_type_to_string mach.Mach.header.Mach.Header.cputype);
-      "soname", `String mach.Mach.name;
+      "architecture", `String architecture;
+      "arch", `String (B2J_Utils.get_arch architecture);
+      "mode", Json.to_number (B2J_Utils.get_mode architecture);
+      "name", `String mach.Mach.name;
       "isLib", `Bool mach.Mach.is_lib;
       "is64", `Bool true;       (* fix this? *)
       "size", Json.to_number mach.Mach.size;

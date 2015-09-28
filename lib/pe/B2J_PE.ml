@@ -34,6 +34,10 @@ let to_json binary config =
     else
       `Null
   in
+  let architecture =
+    PE.MachineType.show_machine
+      pe.PE.header.PEHeader.coff_header.PEHeader.machine
+  in
   let json =
     `O [
       "header", header;
@@ -43,7 +47,9 @@ let to_json binary config =
       (*       "symbols", symbols; *)
       "libraries", libraries;
       "container", `String "PE32";
-      "arch", `String (PE.MachineType.show_machine pe.PE.header.PEHeader.coff_header.PEHeader.machine);
+      "architecture", `String architecture;
+      "arch", `String (B2J_Utils.get_arch architecture);
+      "mode", Json.to_number (B2J_Utils.get_mode architecture);
       "name", `String pe.PE.name;
       "isLib", `Bool pe.PE.is_lib;
       "is64", `Bool false;      (* fix this? *)

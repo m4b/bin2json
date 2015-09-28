@@ -57,6 +57,10 @@ let to_json binary config =
     else
       `Null
   in
+  let architecture =
+    Elf.Constants.machine_to_string
+      elf.Elf.header.Elf.Header.e_machine
+  in
   let json =
     `O [
       "header", header;
@@ -69,8 +73,11 @@ let to_json binary config =
       "slideSectors", slide_sectors;
       "libraries", libraries;
       "container", `String "ELF";
-      "arch", `String (Elf.Constants.machine_to_string elf.Elf.header.Elf.Header.e_machine);
+      "architecture", `String architecture;
+      "arch", `String (B2J_Utils.get_arch architecture);
+      "mode", Json.to_number (B2J_Utils.get_mode architecture);
       "soname", `String elf.Elf.soname;
+      "name", `String elf.Elf.soname;
       "interpreter", `String elf.Elf.interpreter;
       "isLib", `Bool elf.Elf.is_lib;
       "is64", `Bool elf.Elf.is_64;

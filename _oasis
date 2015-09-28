@@ -19,7 +19,8 @@ Library json
   Modules:
     B2J_Json,
     B2J_ByteCoverage,
-    B2J_Config
+    B2J_Config,
+    B2J_Utils
 
 Library mach2json
   Path: lib/mach
